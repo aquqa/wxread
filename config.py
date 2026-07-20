@@ -9,6 +9,16 @@ import re
 
 # 阅读次数 默认40次/20分钟
 READ_NUM = int(os.getenv('READ_NUM') or 40)
+# main_v2 随机阅读配置：总时长单位为分钟，单次间隔单位为秒
+READ_DURATION_MINUTES_MIN = float(os.getenv("READ_DURATION_MINUTES_MIN") or 20)
+READ_DURATION_MINUTES_MAX = float(os.getenv("READ_DURATION_MINUTES_MAX") or 30)
+READ_INTERVAL_SECONDS_MIN = int(os.getenv("READ_INTERVAL_SECONDS_MIN") or 25)
+READ_INTERVAL_SECONDS_MAX = int(os.getenv("READ_INTERVAL_SECONDS_MAX") or 35)
+
+if READ_DURATION_MINUTES_MIN <= 0 or READ_DURATION_MINUTES_MAX < READ_DURATION_MINUTES_MIN:
+    raise ValueError("READ_DURATION_MINUTES_MIN/MAX 配置无效")
+if READ_INTERVAL_SECONDS_MIN <= 0 or READ_INTERVAL_SECONDS_MAX < READ_INTERVAL_SECONDS_MIN:
+    raise ValueError("READ_INTERVAL_SECONDS_MIN/MAX 配置无效")
 # 需要推送时可选，可选pushplus、wxpusher、telegram、serverchan、email
 PUSH_METHOD = "" or os.getenv('PUSH_METHOD')
 # email 推送配置，均通过环境变量设置

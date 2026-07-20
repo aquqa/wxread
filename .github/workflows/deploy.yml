@@ -55,10 +55,14 @@ jobs:
         EmailSender: ${{ secrets.EmailSender }}
         EmailAuthCode: ${{ secrets.EmailAuthCode }}
         EmailRecipients: ${{ secrets.EmailRecipients }}
+        READ_DURATION_MINUTES_MIN: ${{ vars.READ_DURATION_MINUTES_MIN }}
+        READ_DURATION_MINUTES_MAX: ${{ vars.READ_DURATION_MINUTES_MAX }}
+        READ_INTERVAL_SECONDS_MIN: ${{ vars.READ_INTERVAL_SECONDS_MIN }}
+        READ_INTERVAL_SECONDS_MAX: ${{ vars.READ_INTERVAL_SECONDS_MAX }}
         READ_NUM: ${{ vars.READ_NUM }}  # 使用 Repository Variables
 
       run: |
-        python main.py
+        python main_v2.py
 
   keepalive-job:
     name: Keepalive Workflow

@@ -45,6 +45,8 @@
 | ------------------------- | ---------------------------------- | ------------------------------------------------------------ | --------- |
 | `WXREAD_CURL_BASH`         | `read` 接口 `curl_bash`数据 | **必填**，必须提供有效指令                                   | secrets   |
 | `READ_NUM`                 | 阅读次数（每次 30 秒）              | **可选**，阅读时长，默认 20 分钟                           | variables |
+| `READ_DURATION_MINUTES_MIN` / `READ_DURATION_MINUTES_MAX` | main_v2 总阅读时长范围（分钟） | **可选**，默认 20-30 分钟 | variables |
+| `READ_INTERVAL_SECONDS_MIN` / `READ_INTERVAL_SECONDS_MAX` | main_v2 单次阅读间隔范围（秒） | **可选**，默认 25-35 秒 | variables |
 | `PUSH_METHOD`              | `pushplus`/`wxpusher`/`telegram`/`serverchan`/`email` | **可选**，推送方式，默认不推送                                 |    secrets     |
 | `PUSHPLUS_TOKEN`           | PushPlus 的 token                   | 当 `PUSH_METHOD=pushplus` 时必填，[获取地址](https://www.pushplus.plus/uc.html) | secrets   |
 | `WXPUSHER_SPT`             | WxPusher 的token                    | 当 `PUSH_METHOD=wxpusher` 时必填，[获取地址](https://wxpusher.zjiecode.com/docs/#/?id=获取spt) | secrets   |
@@ -89,7 +91,9 @@ Windows 本地运行可编辑 `start.ps1` 顶部的“可修改配置”区域�
 powershell -ExecutionPolicy Bypass -File .\start.ps1
 ```
 
-脚本会设置当前进程的环境变量、切换到项目目录并启动 `main.py`。空配置不会覆盖外部已经设置的环境变量，便于从系统环境变量注入敏感信息。
+脚本会设置当前进程的环境变量、切换到项目目录并启动 `main_v2.py`。空配置不会覆盖外部已经设置的环境变量，便于从系统环境变量注入敏感信息。
+
+`main_v2.py` 会从上述两个范围中随机选择本次总阅读时长和每次阅读间隔；`main.py` 保留原有固定次数、30 秒间隔逻辑。
 
 ***
 ## Attention 📢

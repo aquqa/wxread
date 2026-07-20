@@ -10,13 +10,11 @@ from email.message import EmailMessage
 import requests
 
 from config import (
-    EMAIL_AUTH_CODE,
-    EMAIL_ENABLED,
-    EMAIL_RECIPIENTS,
-    EMAIL_SENDER,
-    EMAIL_SMTP_HOST,
-    EMAIL_SMTP_PORT,
-    EMAIL_SUBJECT_PREFIX,
+    EmailAuthCode,
+    EmailRecipients,
+    EmailSender,
+    EmailSmtpHost,
+    EmailSmtpPort,
     PUSHPLUS_TOKEN,
     SERVERCHAN_SPT,
     TELEGRAM_BOT_TOKEN,
@@ -122,31 +120,27 @@ class PushNotification:
 
     def push_email(self, content, is_success):
         try:
-            if str(EMAIL_ENABLED).strip().lower() in {"0", "false", "no", "off"}:
-                logger.info("邮件推送已禁用，跳过推送。")
-                return False
-
-            host = EMAIL_SMTP_HOST.strip()
-            port = int(EMAIL_SMTP_PORT)
-            sender = EMAIL_SENDER.strip()
-            auth_code = EMAIL_AUTH_CODE
+            host = EmailSmtpHost.strip()
+            port = int(EmailSmtpPort)
+            sender = EmailSender.strip()
+            auth_code = EmailAuthCode
             recipients = [
                 recipient.strip()
-                for recipient in EMAIL_RECIPIENTS.replace(";", ",").split(",")
+                for recipient in EmailRecipients.replace(";", ",").split(",")
                 if recipient.strip()
             ]
             if not host or not sender or not auth_code:
                 raise ValueError(
-                    "邮件配置不完整，需要设置 EMAIL_SMTP_HOST、EMAIL_SENDER、EMAIL_AUTH_CODE"
+                    "邮件配置不完整，需要设置 EmailSmtpHost、EmailSender、EmailAuthCode"
                 )
             if not recipients:
-                raise ValueError("需要设置 EMAIL_RECIPIENTS")
+                raise ValueError("需要设置 EmailRecipients")
 
             title = f"微信阅读-{'成功' if is_success else '失败'}"
             message = EmailMessage()
             message["From"] = sender
             message["To"] = ", ".join(recipients)
-            message["Subject"] = f"{EMAIL_SUBJECT_PREFIX}{title}"
+            message["Subject"] = title
             message.set_content(content)
 
             if port == 465:

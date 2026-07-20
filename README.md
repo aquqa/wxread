@@ -33,7 +33,7 @@
   - `WXREAD_CURL_BASH`：上面抓read接口后转换为curl_bash的数据。
   - `PUSH_METHOD`：推送方法，可选 `pushplus`、`wxpusher`、`telegram`、`serverchan`、`email`。
   - `PUSHPLUS_TOKEN` or `WXPUSHER_SPT` or `TELEGRAM_BOT_TOKEN`&`TELEGRAM_CHAT_ID` or `SERVERCHAN_SPT`: 选择对应推送后填写配置。
-  - 使用 `email` 时，通过 `EMAIL_*` 环境变量配置 SMTP 和收件人信息。
+  - 使用 `email` 时，通过 `Email*` 环境变量配置 SMTP 和收件人信息。
   
 - 在 **Variables** 部分，最下方添加变量：
   - `READ_NUM`：设定每次阅读的目标次数。
@@ -56,16 +56,14 @@
 配置 `PUSH_METHOD=email` 后，可设置以下环境变量：
 
 ```text
-EMAIL_ENABLED=true
-EMAIL_SMTP_HOST=smtp.example.com
-EMAIL_SMTP_PORT=465
-EMAIL_SENDER=sender@example.com
-EMAIL_AUTH_CODE=邮箱授权码
-EMAIL_RECIPIENTS=receiver1@example.com,receiver2@example.com
-EMAIL_SUBJECT_PREFIX=微信读书-
+EmailSmtpHost=smtp.example.com
+EmailSmtpPort=465
+EmailSender=sender@example.com
+EmailAuthCode=邮箱授权码
+EmailRecipients=receiver1@example.com,receiver2@example.com
 ```
 
-`EMAIL_RECIPIENTS` 支持使用逗号或分号分隔多个收件人。`EMAIL_AUTH_CODE` 等敏感信息不要提交到 Git。
+`EmailRecipients` 支持使用逗号或分号分隔多个收件人。`EmailAuthCode` 等敏感信息不要提交到 Git。
 
 ### 视频教程
 

@@ -2,11 +2,21 @@ import json
 import logging
 import os
 import random
+import smtplib
+import ssl
 import time
+from email.message import EmailMessage
 
 import requests
 
 from config import (
+    EMAIL_AUTH_CODE,
+    EMAIL_ENABLED,
+    EMAIL_RECIPIENTS,
+    EMAIL_SENDER,
+    EMAIL_SMTP_HOST,
+    EMAIL_SMTP_PORT,
+    EMAIL_SUBJECT_PREFIX,
     PUSHPLUS_TOKEN,
     SERVERCHAN_SPT,
     TELEGRAM_BOT_TOKEN,
@@ -110,6 +120,54 @@ class PushNotification:
                     time.sleep(sleep_time)
         return False
 
+    def push_email(self, content, is_success):
+        try:
+            if str(EMAIL_ENABLED).strip().lower() in {"0", "false", "no", "off"}:
+                logger.info("邮件推送已禁用，跳过推送。")
+                return False
+
+            host = EMAIL_SMTP_HOST.strip()
+            port = int(EMAIL_SMTP_PORT)
+            sender = EMAIL_SENDER.strip()
+            auth_code = EMAIL_AUTH_CODE
+            recipients = [
+                recipient.strip()
+                for recipient in EMAIL_RECIPIENTS.replace(";", ",").split(",")
+                if recipient.strip()
+            ]
+            if not host or not sender or not auth_code:
+                raise ValueError(
+                    "邮件配置不完整，需要设置 EMAIL_SMTP_HOST、EMAIL_SENDER、EMAIL_AUTH_CODE"
+                )
+            if not recipients:
+                raise ValueError("需要设置 EMAIL_RECIPIENTS")
+
+            title = f"微信阅读-{'成功' if is_success else '失败'}"
+            message = EmailMessage()
+            message["From"] = sender
+            message["To"] = ", ".join(recipients)
+            message["Subject"] = f"{EMAIL_SUBJECT_PREFIX}{title}"
+            message.set_content(content)
+
+            if port == 465:
+                smtp = smtplib.SMTP_SSL(host, port, timeout=30)
+            else:
+                smtp = smtplib.SMTP(host, port, timeout=30)
+
+            with smtp:
+                smtp.ehlo()
+                if port not in (25, 465):
+                    smtp.starttls(context=ssl.create_default_context())
+                    smtp.ehlo()
+                smtp.login(sender, auth_code)
+                smtp.send_message(message)
+
+            logger.info("邮件推送成功，收件人数量：%d", len(recipients))
+            return True
+        except (KeyError, TypeError, ValueError, OSError, smtplib.SMTPException) as exc:
+            logger.error("邮件推送失败: %s", exc)
+            return False
+
 
 def push(content, method, is_success = True):
     notifier = PushNotification()
@@ -128,6 +186,8 @@ def push(content, method, is_success = True):
         return notifier.push_wxpusher(content, WXPUSHER_SPT)
     if method == "serverchan":
         return notifier.push_serverChan(content, SERVERCHAN_SPT, is_success)
+    if method == "email":
+        return notifier.push_email(content, is_success)
 
-    logger.warning("无效的通知渠道 '%s'，已跳过推送。支持：pushplus、telegram、wxpusher、serverchan", method)
+    logger.warning("无效的通知渠道 '%s'，已跳过推送。支持：pushplus、telegram、wxpusher、serverchan、email", method)
     return False

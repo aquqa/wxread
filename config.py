@@ -9,8 +9,16 @@ import re
 
 # 阅读次数 默认40次/20分钟
 READ_NUM = int(os.getenv('READ_NUM') or 40)
-# 需要推送时可选，可选pushplus、wxpusher、telegram
+# 需要推送时可选，可选pushplus、wxpusher、telegram、serverchan、email
 PUSH_METHOD = "" or os.getenv('PUSH_METHOD')
+# email 推送配置，均通过环境变量设置
+EMAIL_ENABLED = os.getenv("EMAIL_ENABLED") or "true"
+EMAIL_SMTP_HOST = os.getenv("EMAIL_SMTP_HOST") or ""
+EMAIL_SMTP_PORT = os.getenv("EMAIL_SMTP_PORT") or "465"
+EMAIL_SENDER = os.getenv("EMAIL_SENDER") or ""
+EMAIL_AUTH_CODE = os.getenv("EMAIL_AUTH_CODE") or ""
+EMAIL_RECIPIENTS = os.getenv("EMAIL_RECIPIENTS") or ""
+EMAIL_SUBJECT_PREFIX = os.getenv("EMAIL_SUBJECT_PREFIX") or ""
 # pushplus推送时需填
 PUSHPLUS_TOKEN = "" or os.getenv("PUSHPLUS_TOKEN")
 # telegram推送时需填
